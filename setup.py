@@ -2,7 +2,7 @@
 
 from setuptools import setup, find_packages
 
-version = '0.0.1.dev1'
+version = '0.0.2.dev1'
 requires = ['requests']
 
 with open('README.rst') as f:
@@ -11,7 +11,7 @@ with open('README.rst') as f:
 
 setup(
     name='clearcache-python',
-    version=requests.__version__,
+    version=version,
     description='Simple python cache clearing tool',
     long_description=readme,
     author='University of Central Florida - Marketing',
