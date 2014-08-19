@@ -28,7 +28,7 @@ class CacheHandler:
     varnish nodes.
     """
 
-    def __init__(self, hostname, varnish_nodes):
+    def __init__(self, hostnames, varnish_nodes):
         """
         Initiate the varnish nodes to be used to
         clear the cache.
@@ -40,10 +40,13 @@ class CacheHandler:
             self.varnish_nodes = []
             log.warning('No varnish nodes provided')
 
-        if is_valid_hostname(hostname):
-            self.hostname = hostname
+        if isinstance(hostnames, list) and hostnames:
+            for hostname in hostnames:
+                if not is_valid_hostname(hostname):
+                    raise HostnameException('Hostname is not valid: ' + hostname)
+            self.hostnames = hostnames
         else:
-            raise HostnameException('Hostname is not valid: ' + hostname)
+            HostnameException('No hostnames were provided')
 
 
     def ban_url_list(self, url_list):
@@ -51,23 +54,31 @@ class CacheHandler:
         Bans a list of urls.
         """
         if isinstance(url_list, list) and url_list:
-            if self.hostname and self.varnish_nodes:
-                url_combo = '(' + ''.join(url_list) + ')'
+            if self.hostnames and self.varnish_nodes:
+                url_combo = '(' + '|'.join(url_list) + ')'
 
-                header = {'X-Ban-Url': url_combo, 'X-Ban-Host': self.hostname}
+                for hostname in self.hostnames:
+                    header = {'X-Ban-Url': url_combo, 'X-Ban-Host': hostname}
 
-                s = Session()
-                for node in self.varnish_nodes:
-                    req = Request('BAN', node,
-                        headers=header
-                    )
-                    prepped = req.prepare()
+                    s = Session()
+                    for node in self.varnish_nodes:
+                        print hostname
+                        print node
+                        print url_combo
 
-                    resp = s.send(prepped,
-                                  timeout=30)
+                        try:
+                            req = Request('BAN', node,
+                                headers=header
+                            )
+                            prepped = req.prepare()
 
-                    if codes.ok != resp.status_code:
-                        log.warning('Error sending ban to ' + node)
+                            resp = s.send(prepped,
+                                          timeout=2)
+                        except Exception:
+                            log.error('Error sending ban to ' + node)
+                        else:
+                            if codes.ok != resp.status_code:
+                                log.error('Error sending ban to ' + node)
             else:
                 log.warning('No varnish nodes provided to clear the cache')
         else:
