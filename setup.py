@@ -2,7 +2,7 @@
 
 from setuptools import setup, find_packages
 
-version = '0.0.4'
+version = '0.0.5'
 requires = ['requests']
 
 with open('README.rst') as f:
@@ -22,7 +22,7 @@ setup(
     install_requires=requires,
     zip_safe=False,
     classifiers=(
-        'Development Status :: 2 - Pre-Alpha',
+        'Development Status :: 5 - Production/Stable',
         'Environment :: Web Environment',
         'Intended Audience :: Developers',
         'Natural Language :: English',
@@ -30,6 +30,5 @@ setup(
         'Programming Language :: Python',
         'Programming Language :: Python :: 2.6',
         'Programming Language :: Python :: 2.7',
-
     ),
 )
