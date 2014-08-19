@@ -42,7 +42,7 @@ class CacheHandler:
         if is_valid_hostname(hostname):
             self.hostname = hostname
         else:
-            raise HostnameException('Hostname is not valid')
+            raise HostnameException('Hostname is not valid: ' + hostname)
 
 
     def ban_url_list(url_list):
@@ -50,7 +50,7 @@ class CacheHandler:
         Bans a list of urls.
         """
         if self.hostname and self.varnish_nodes:
-            url_combo = '(' + '.*|'.join(url_list) + '.*)'
+            url_combo = '(' + ''.join(url_list) + ')'
 
             header = {'X-Ban-Url': url_combo, 'X-Ban-Host': self.hostname}
 
