@@ -46,6 +46,7 @@ class CacheHandler:
                     raise HostnameException('Hostname is not valid: ' + hostname)
             self.hostnames = hostnames
         else:
+            self.hostnames = None
             HostnameException('No hostnames were provided')
 
 
@@ -62,10 +63,6 @@ class CacheHandler:
 
                     s = Session()
                     for node in self.varnish_nodes:
-                        print hostname
-                        print node
-                        print url_combo
-
                         try:
                             req = Request('BAN', node,
                                 headers=header
