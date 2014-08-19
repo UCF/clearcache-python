@@ -45,7 +45,7 @@ class CacheHandler:
             raise HostnameException('Hostname is not valid: ' + hostname)
 
 
-    def ban_url_list(url_list):
+    def ban_url_list(self, url_list):
         """
         Bans a list of urls.
         """
