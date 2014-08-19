@@ -34,6 +34,7 @@ class CacheHandler:
         clear the cache.
         """
         if isinstance(varnish_nodes, list) and varnish_nodes:
+            varnish_nodes = ['http://' + x if not (x.startswith('http://') or x.startswith('https://')) else x for x in varnish_nodes]
             self.varnish_nodes = varnish_nodes
         else:
             self.varnish_nodes = []
@@ -49,22 +50,25 @@ class CacheHandler:
         """
         Bans a list of urls.
         """
-        if self.hostname and self.varnish_nodes:
-            url_combo = '(' + ''.join(url_list) + ')'
+        if isinstance(url_list, list) and url_list:
+            if self.hostname and self.varnish_nodes:
+                url_combo = '(' + ''.join(url_list) + ')'
 
-            header = {'X-Ban-Url': url_combo, 'X-Ban-Host': self.hostname}
+                header = {'X-Ban-Url': url_combo, 'X-Ban-Host': self.hostname}
 
-            s = Session()
-            for node in self.varnish_nodes:
-                req = Request('BAN', node,
-                    headers=header
-                )
-                prepped = req.prepare()
+                s = Session()
+                for node in self.varnish_nodes:
+                    req = Request('BAN', node,
+                        headers=header
+                    )
+                    prepped = req.prepare()
 
-                resp = s.send(prepped,
-                              timeout=30)
+                    resp = s.send(prepped,
+                                  timeout=30)
 
-                if codes.ok != resp.status_code:
-                    log.warning('Error sending ban to ' + node)
+                    if codes.ok != resp.status_code:
+                        log.warning('Error sending ban to ' + node)
+            else:
+                log.warning('No varnish nodes provided to clear the cache')
         else:
-            log.warning('No varnish nodes set to clear the cache')
+            log.warning('No URLs provided')
