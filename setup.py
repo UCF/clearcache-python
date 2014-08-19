@@ -2,7 +2,7 @@
 
 from setuptools import setup, find_packages
 
-version = '0.0.5'
+version = '0.0.6'
 requires = ['requests']
 
 with open('README.rst') as f:
@@ -30,5 +30,6 @@ setup(
         'Programming Language :: Python',
         'Programming Language :: Python :: 2.6',
         'Programming Language :: Python :: 2.7',
+
     ),
 )
